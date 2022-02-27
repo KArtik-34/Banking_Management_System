@@ -1,0 +1,1 @@
+print("\nalternate_no \t      : ","alternate_no","\nAadhar Number\t      : ","aadhar","\nPan No.\t\t      : ","pan","\n")

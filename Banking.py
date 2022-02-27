@@ -2,6 +2,7 @@
 '''          Bank Management System
    Made By: Kartikay patni & harsh singh kharayat
                   2021-2022'''
+                  
 
 from ast import Pass
 import ctypes
@@ -33,7 +34,7 @@ def customer_record():
   print('Customer Records')
   print('-'*120)
   for result in results:
-    print(result[0], result[1], result[2], result[3], result[4], result[5],result[6], result[7], result[8])
+    print(result[0], result[1], result[2], result[3], result[4], result[5],result[6], result[7], result[8], result[9], result[10],)
   print('-'*120)
   conct.close()
   wait = input('\nPress any key to continue....')
@@ -165,7 +166,7 @@ def search_menu(): # creating search menu
       print('-'*80)
       for record in records:
        print(record[0],",", record[1],",", record[2],",", record[3],",",
-             record[4],",", record[5],",", record[6],",", record[7],",", record[8])
+             record[4],",", record[5],",", record[6],",", record[7],",", record[8], record[9],",",record[10])
       if(n <= 0):
         print(field_name, ' ', value, ' does not exist')
       wait = input('\n Press any key to continue....')
@@ -273,14 +274,28 @@ def add_account():
     conct = mysql.connector.connect(
         host='localhost', database='bank_management_system', user='root', password='1234')
     cursor = conct.cursor()
-   
-    name = input('Enter Name : ')
+
+    first_name=input("frst: ")
+    last_name=input("last: ")
+    first_name=first_name.rstrip()
+    first_name=first_name.capitalize()
+    last_name=last_name.capitalize()
+    name = first_name+" "+last_name
+    # name = input('Enter Name : ')
     addr = input('Enter address : ')
     
     phone = (input('Enter Phone no : '))
     while len(phone) != 10 or not phone.isdigit():
      print('You have not entered a 10 digit value! Please try again.')
      phone = input('Please input your 10 digit phone number no. : ')
+
+
+    alternate_no = (input('Enter Alternate Phone no. : '))
+    while len(alternate_no) != 10 or not alternate_no.isdigit():
+     print('You have not entered a 10 digit value! Please try again.')
+     alternate_no = input('Please input your 10 digit phone number no. : ')
+
+
     email = input('Enter Email : ')
     while "@" not in email:      # this will check if email id is correct or not
       email = input("Your email address must have '@' in it\nPlease write your email address again: ")
@@ -301,11 +316,35 @@ def add_account():
       print('You have not entered a 12 digit value! Please try again.')
       adr = input('Please input your 12 digit AAdhar no. : ')
     aadhar = (adr[:4]+"-"+adr[4:8]+"-"+adr[8:12])
+    pan = input("Enter your pan no.: ")
+
+    while pan.isupper()==False:
+      pan=input("Pan no. should be in uppercase'CAPITALIZED'\nEnter your pan no.")
+
+    while len(pan)!=10:
+      pan = input("pan not of correct length\nEnter your pan no.: ")
+
+    pan2=(pan[5:9])
+    while pan2.isnumeric()==False:
+      pan = input("Invalid pan no.\nEnter your pan no.: ")
+      pan2=(pan[5:9])
+    pan_nm=str(last_name[:1])
+    pan1=str(pan[4:5])
+    print(pan1)
+    while pan_nm not in pan1:
+      pan = input("invalid\nEnter your pan no.: ")
+      pan1=str(pan[4:5])
+    pan_=["P","C","A","F","H","T"]
+
+    pan0=str(pan[3:4])
+    while pan0 not in pan_:
+      pan = input("invalid Pan no. \nEnter the name of a pan no.: ")
+      pan0=str(pan[3:4])
     actype = input('Account Type (saving/current ) :') 
       
     balance =(input('Enter opening balance , min = 5000/- : '))
   
-    sql = 'insert into customer(name,address,phone,email,aadhar_no,acc_type,balance,status) values ( "' + name +'","'+ addr+'","'+phone+'","'+email+'","'+aadhar+'","'+actype+'",'+balance+',"active" );'
+    sql = 'insert into customer(name,address,phone,Alternate_no,email,aadhar_no,Pan_no,acc_type,balance,status) values ( "' + name +'","'+ addr+'","'+phone+'","'+alternate_no+'","'+email+'","'+aadhar+'","'+pan+'","'+actype+'",'+balance+',"active" );'
     print(sql)
     delete_last_line()
     delete_last_line()
@@ -343,7 +382,7 @@ def add_account():
       return ctypes.windll.user32.MessageBoxW(0, text, title, style)
     Mbox('Account Created', 'Your account has been sucessfully created\nThank you for working with us', 0)
     print('\n\nNew customer added successfully')
-    print("Account Holder's Name : ", name,"\nAddress\t\t      : ", addr,"\nEmail Address\t      : ",email,"\nContact Number \t      : ",phone,"\nAadhar Number\t      : ",aadhar,"\n")
+    print("Account Holder's Name : ", name,"\nAddress\t\t      : ", addr,"\nEmail Address\t      : ",email,"\nContact Number \t      : ",phone,"\nalternate_no \t      : ",alternate_no,"\nAadhar Number\t      : ",aadhar,"\nPan No.\t\t      : ",pan,"\n")
     wait= input('\n Press any key to continue....')
 
 
