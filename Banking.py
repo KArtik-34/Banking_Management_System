@@ -3,15 +3,21 @@
    Made By: Kartikay patni & harsh singh kharayat
                   2021-2022'''
                   
-
-from ast import Pass
 import ctypes
 import sys
 from time import sleep
 import mysql.connector
 from datetime import date
+import re  
+import pyfiglet
 
-def delete_last_line():
+result = pyfiglet.figlet_format("BANK MANAGEMENT SYSTEM")
+print(result)
+sleep(2)
+print("")
+regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  #this is for email check
+
+def delete_last_line():   #created function to delete previous line printed
 
     #cursor up one line
   sys.stdout.write('\x1b[1A')
@@ -21,9 +27,9 @@ def delete_last_line():
 
 def clear():
   for _ in range(65):
-     print()
+    print()
 
-def customer_record():
+def customer_record():     #To show records of customer
   conct = mysql.connector.connect(host='localhost', database='bank_management_system', user='root', password='1234') #Connection for mysql Database
       
   cursor = conct.cursor()
@@ -39,7 +45,7 @@ def customer_record():
   conct.close()
   wait = input('\nPress any key to continue....')
 
-def account_status(acno):
+def account_status(acno):        
   conct = mysql.connector.connect(
       host='localhost', database='bank_management_system', user='root', password='1234')
   cursor = conct.cursor()
@@ -63,8 +69,10 @@ def deposit_amount(): #creating a function for depositing amount
       sql2 = 'insert into transaction(amount,type,acno,dot) values(' + amount +',"deposit",'+acno+',"'+str(today)+'");'
       cursor.execute(sql2)
       cursor.execute(sql1)
-      #print(sql1)
-      #print(sql2)
+      print(sql1)
+      print(sql2)
+      delete_last_line()
+      delete_last_line()
       print('\n\namount deposited')
 
     else:
@@ -91,8 +99,10 @@ def withdraw_amount(): #crearing a funtion for withdraw money
 
       cursor.execute(sql2)
       cursor.execute(sql1)
-      #print(sql1)
-      #print(sql2)
+      print(sql1)
+      print(sql2)
+      delete_last_line()
+      delete_last_line()
       print('\n\namount Withdrawn')
 
     else:
@@ -157,7 +167,8 @@ def search_menu(): # creating search menu
         sql = 'select * from customer where '+field_name + ' = '+value+';'
       else:
         sql = 'select * from customer where '+field_name +' like "%'+value+'%";'
-      #print(sql)
+      print(sql)
+      delete_last_line()
       cursor.execute(sql)
       records = cursor.fetchall()
       n = len(records)
@@ -275,13 +286,13 @@ def add_account():
         host='localhost', database='bank_management_system', user='root', password='1234')
     cursor = conct.cursor()
 
-    first_name=input("frst: ")
-    last_name=input("last: ")
+    first_name=input("Enter your first Name : ")
+    last_name=input("Enter your last Name : ")
     first_name=first_name.rstrip()
+    first_name=first_name.lstrip()
     first_name=first_name.capitalize()
     last_name=last_name.capitalize()
     name = first_name+" "+last_name
-    # name = input('Enter Name : ')
     addr = input('Enter address : ')
     
     phone = (input('Enter Phone no : '))
@@ -297,18 +308,9 @@ def add_account():
 
 
     email = input('Enter Email : ')
-    while "@" not in email:      # this will check if email id is correct or not
-      email = input("Your email address must have '@' in it\nPlease write your email address again: ")
-      if len(email) <= 6 :
-        email = input("Your email address is too short\nPlease write your email address again: ")
-      if "." not in email:
-        email = input("Your email address must have '.' in it\nPlease write your email address again: ")
-    while "." not in email:
-      email = input("Your email address must have '.' in it\nPlease write your email address again: ")
-      if len(email) <= 6 :
-        email = input("Your email address is too short\nPlease write your email address again: ")
-      if "@" not in email:
-        email = input("Your email address must have '@' in it\nPlease write your email address again: ")
+    while bool(re.search(regex,email))==False:   
+      email = input("Invalid Email\nEnter your Email") 
+    
      
     
     adr = input('Enter AAdhar no :')
@@ -316,6 +318,7 @@ def add_account():
       print('You have not entered a 12 digit value! Please try again.')
       adr = input('Please input your 12 digit AAdhar no. : ')
     aadhar = (adr[:4]+"-"+adr[4:8]+"-"+adr[8:12])
+
     pan = input("Enter your pan no.: ")
 
     while pan.isupper()==False:
@@ -325,24 +328,48 @@ def add_account():
       pan = input("pan not of correct length\nEnter your pan no.: ")
 
     pan2=(pan[5:9])
+
     while pan2.isnumeric()==False:
       pan = input("Invalid pan no.\nEnter your pan no.: ")
       pan2=(pan[5:9])
     pan_nm=str(last_name[:1])
     pan1=str(pan[4:5])
     print(pan1)
+    delete_last_line()
+
     while pan_nm not in pan1:
       pan = input("invalid\nEnter your pan no.: ")
       pan1=str(pan[4:5])
-    pan_=["P","C","A","F","H","T"]
 
+    pan_=["P","C","A","F","H","T"]
     pan0=str(pan[3:4])
+
     while pan0 not in pan_:
+
       pan = input("invalid Pan no. \nEnter the name of a pan no.: ")
+
       pan0=str(pan[3:4])
-    actype = input('Account Type (saving/current ) :') 
+
+
+    pan3=str(pan[9:10])
+    while pan3.isalpha()==False:
+      pan=(input("Invalid Pan\n Enter your pan no.:"))
+      pan3=str(pan[9:10])
+
+
+    acntype=["s","S","c","C"]
+    actype = input('Account Type (saving/current ) for savings press "S" for current press "C" :') 
+    while actype not in acntype:
+      actype = input("Please Enter 'C' or 'S' for Current or Savings :")
+    if actype =="s" or actype=="S":
+      actype="Savings"
+    else:
+      actype="Current" 
       
-    balance =(input('Enter opening balance , min = 5000/- : '))
+    balance =int(input('Enter opening balance , min = 5000/- : '))
+    while balance<= 5000:
+      balance =int(input('Balance too low , min = 5000/- : '))
+    balance=str(balance)
   
     sql = 'insert into customer(name,address,phone,Alternate_no,email,aadhar_no,Pan_no,acc_type,balance,status) values ( "' + name +'","'+ addr+'","'+phone+'","'+alternate_no+'","'+email+'","'+aadhar+'","'+pan+'","'+actype+'",'+balance+',"active" );'
     print(sql)
@@ -410,6 +437,7 @@ def modify_account():
        field_name = 'email'
     sql ='update customer set ' + field_name + '="'+ new_data +'" where acno='+acno+';' 
     print(sql)
+    delete_last_line()
     cursor.execute(sql)
     print('\nCustomer Information modified..')
     wait = input('\n Press any key to continue....')
@@ -440,7 +468,13 @@ def activate_account():
 def main_menu():
     while True:
       clear()
+      result_2 = pyfiglet.figlet_format("ABC BANK")
+      print(result_2)
+
+      sleep(3)
+
       print(' \n \nMain Menu')
+      print("\nselect the options ")
       print("\n1.  Add Account")
       print('\n2.  Modify Account')
       print('\n3.  Close Account')
@@ -450,24 +484,37 @@ def main_menu():
       print('\n7.  Report Menu')
       print('\n8.  Close application')
       print('\n\n')
-      choice = int(input('Enter your choice ...: '))
-      if choice == 1:
+
+      choose =["1","2","3","4","5","6","7","8"]
+      
+      choice = (input('Enter your choice ...: '))
+      while choice not in choose:
+        print("\n1.  Add Account")
+        print('\n2.  Modify Account')
+        print('\n3.  Close Account')
+        print('\n4.  Activate Account')
+        print('\n5.  Transaction Menu')
+        print('\n6.  Search Menu')
+        print('\n7.  Report Menu')
+        print('\n8.  Close application')
+        choice = (input('Invalid entry \nEnter your choice ...: '))
+      if choice == "1":
         add_account()
-      if choice == 2:
+      if choice == "2":
         modify_account()
-      if choice == 3:
+      if choice == "3":
         close_account()
 
-      if choice == 4:
+      if choice == "4":
         activate_account()
 
-      if choice ==5 :
+      if choice =="5" :
         transaction_menu()
-      if choice ==6 :
+      if choice =="6" :
         search_menu()
-      if choice == 7:
+      if choice == "7":
         report_menu()
-      if choice ==8:
+      if choice =="8":
         break
 
 if __name__ == "__main__":

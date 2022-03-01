@@ -1,1 +1,4 @@
-print("\nalternate_no \t      : ","alternate_no","\nAadhar Number\t      : ","aadhar","\nPan No.\t\t      : ","pan","\n")
+import pyfiglet
+  
+result = pyfiglet.figlet_format("bank")
+print(result)
